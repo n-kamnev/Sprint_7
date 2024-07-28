@@ -1,5 +1,5 @@
 import allure
-from ez_scooter_api import CreateOrderApi
+from scooter_api import CreateOrderApi
 import pytest
 
 
@@ -26,7 +26,6 @@ class TestCreateOrder:
         }
         response = CreateOrderApi.create_order(payload)
         response_track = response.json()["track"]
-
         assert (
                 response.status_code == 201
                 and response_track is not None

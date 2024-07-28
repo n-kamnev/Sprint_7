@@ -1,7 +1,8 @@
 import allure
-from ez_scooter_api import AuthCourierApi
+from scooter_api import AuthCourierApi
 import data
 import helper
+import valid_answers
 
 
 class TestLoginCourier:
@@ -16,7 +17,6 @@ class TestLoginCourier:
         auth_courier = AuthCourierApi.auth_courier(login_pass)
         courier_id = auth_courier.json()["id"]
         AuthCourierApi.delete_courier(courier_id)
-
         assert (
                 auth_courier.status_code == 200
                 and courier_id is not None
@@ -31,11 +31,10 @@ class TestLoginCourier:
         non_existent_courier = AuthCourierApi.auth_courier(
             data.TestAuthCourier.NON_EXISTENT_COURIER_BODY
         )
-
         assert (
                 non_existent_courier.status_code == 404
                 and non_existent_courier.json()
-                == {"code": 404, "message": "Учетная запись не найдена"}
+                == valid_answers.ACCOUNT_WAS_NOT_FOUND
         )
 
     @allure.step("Проверяем авторизацию с пустым логином")
@@ -45,9 +44,8 @@ class TestLoginCourier:
     def test_auth_with_empty_login(self):
         body = helper.CourierFactory.modify_create_courier("login", "")
         auth_with_empty_login = AuthCourierApi.auth_courier(body)
-
         assert (
                 auth_with_empty_login.status_code == 400
                 and auth_with_empty_login.json()
-                == {"code": 400, "message": "Недостаточно данных для входа"}
+                == valid_answers.THERE_IS_NOT_ENOUGH_DATA_TO_LOGIN
         )
